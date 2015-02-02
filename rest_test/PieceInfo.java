@@ -56,7 +56,9 @@ public class PieceInfo {
     public String toString() {
 	return String.format("Name:%s\nArtist:%s\nYear:%s", getName(), getArtist(), getYear());
     }
-    
+
+
+    //TO CHANGE - initialize surfs right away so IPoints can be calculated and stored
     //compares images
     //returns ratio of matching points to total points of interest
     private double surfCompare(BufferedImage imgA, BufferedImage imgB) {

@@ -52,10 +52,14 @@ public class PieceInfo {
     public void addImage(BufferedImage img) {
 	images.add(img);
     }
+
+    public String toString() {
+	return String.format("Name:%s\nArtist:%s\nYear:%s", getName(), getArtist(), getYear());
+    }
     
     //compares images
     //returns ratio of matching points to total points of interest
-    private Double surfCompare(BufferedImage imgA, BufferedImage imgB) {
+    private double surfCompare(BufferedImage imgA, BufferedImage imgB) {
 	Surf surfA = new Surf(imgA);
 	Surf surfB = new Surf(imgB);
 	
@@ -69,11 +73,11 @@ public class PieceInfo {
     
     //compares an input image to each image in list and returns
     //strongest percentage of matched points of interest
-    public Double compareImage(BufferedImage input) {
-	Double ratio = 0.0;
+    public double compareImage(BufferedImage input) {
+	double ratio = 0.0;
 	
 	for(BufferedImage img:images) {
-	    Double cur = surfCompare(img, input);
+	    double cur = surfCompare(img, input);
 	    
 	    if(cur > ratio)
 		ratio = cur;

@@ -3,13 +3,8 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
-
 import org.restlet.resource.*;
 
-/*import org.restlet.ext.json.*;
-import org.json.simple.*;
-import org.json.simple.parser.*;
-*/
 public class TestClient extends ClientResource {
 
     public static void main(String[] args) throws Exception {
@@ -24,19 +19,8 @@ public class TestClient extends ClientResource {
 	    
 	}
 	
-	PieceInfo match = rest.identify(img);
+	String match = rest.identify(img);
 	
-	System.out.printf("%s\n", match.toString());
-
-	/*
-	JSONObject jobj = new JSONObject();
-	jobj.put("testkey", "testval");
-
-	JsonRepresentation jrep = new JsonRepresentation(jobj);
-
-	JSONObject info = testRes.post(jrep).getJsonObject();
-	*/
-	
-	//System.out.printf("%s\n", rest.post("test"));//info.get("testkey"));
+	System.out.printf("%s\n", match);
     }
 }

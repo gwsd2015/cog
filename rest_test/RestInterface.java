@@ -15,7 +15,7 @@ public interface RestInterface {
     public void store(String str);
 
     @Post
-    public PieceInfo identify(BufferedImage img) throws Exception;
+    public String identify(BufferedImage img) throws Exception;
 
     @Delete
     public void remove() throws Exception;
