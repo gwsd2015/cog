@@ -5,6 +5,8 @@ import java.io.*;
 import javax.imageio.*;
 
 import org.restlet.resource.*;
+import org.restlet.representation.*;
+import org.restlet.data.*;
 
 public interface RestInterface {
 
@@ -12,10 +14,10 @@ public interface RestInterface {
     public String retrieve(String str);
 
     @Put
-    public void store(String str);
+    public void store(Representation byteRep);
 
     @Post
-    public String identify(BufferedImage img) throws Exception;
+    public String identify(Representation byteRep) throws Exception;
 
     @Delete
     public void remove() throws Exception;

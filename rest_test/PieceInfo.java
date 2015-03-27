@@ -7,14 +7,14 @@ import java.awt.image.*;
 public class PieceInfo {
     private String artist, name;
     private int year;
-    private ArrayList<BufferedImage> images;
+    private ArrayList<Surf> images;
 
     //initializes with given name and default artist and year
     public PieceInfo(String nm) {
 	name = nm;
 	artist = "unknown";
 	year = 0;
-	images = new ArrayList<BufferedImage>();
+	images = new ArrayList<Surf>();
     }
 
     //initializes with given input
@@ -22,7 +22,7 @@ public class PieceInfo {
 	name = nm;
 	artist = art;
 	year = y;
-	images = new ArrayList<BufferedImage>();
+	images = new ArrayList<Surf>();
     }
     
     public String getName() {
@@ -50,7 +50,10 @@ public class PieceInfo {
     }
 
     public void addImage(BufferedImage img) {
-	images.add(img);
+	Surf surf = new Surf(img);
+	surf.getFreeOrientedInterestPoints();
+	
+	images.add(surf);
     }
 
     public String toString() {
@@ -61,24 +64,22 @@ public class PieceInfo {
     //TO CHANGE - initialize surfs right away so IPoints can be calculated and stored
     //compares images
     //returns ratio of matching points to total points of interest
-    private double surfCompare(BufferedImage imgA, BufferedImage imgB) {
-	Surf surfA = new Surf(imgA);
-	Surf surfB = new Surf(imgB);
+    private double surfCompare(Surf imgA, Surf imgB) {
 	
-	Map<SURFInterestPoint, SURFInterestPoint> matchesA = surfA.getMatchingPoints(surfB, false);
+	Map<SURFInterestPoint, SURFInterestPoint> matchesA = imgA.getMatchingPoints(imgB, false);
 	//Map<SURFInterestPoint, SURFInterestPoint> matchesB;
 	
-       	int pointsA = surfA.getFreeOrientedInterestPoints().size();
+       	int pointsA = imgA.getFreeOrientedInterestPoints().size();
 	
 	return (double)matchesA.size() / (double)pointsA;
     }
     
     //compares an input image to each image in list and returns
     //strongest percentage of matched points of interest
-    public double compareImage(BufferedImage input) {
+    public double compareImage(Surf input) {
 	double ratio = 0.0;
 	
-	for(BufferedImage img:images) {
+	for(Surf img:images) {
 	    double cur = surfCompare(img, input);
 	    
 	    if(cur > ratio)
