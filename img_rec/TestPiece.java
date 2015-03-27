@@ -17,8 +17,8 @@ public class TestPiece {
 	    Surf surfA = new Surf(imageA);
 	    Surf surfB = new Surf(imageB);
 	    
-	    surfA.getFreeOrientedInterestPoints();
-	    surfB.getFreeOrientedInterestPoints();
+	    //surfA.getFreeOrientedInterestPoints();
+	    //surfB.getFreeOrientedInterestPoints();
 	    
 	    Map<SURFInterestPoint, SURFInterestPoint> matches;
 	    

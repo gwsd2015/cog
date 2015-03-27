@@ -34,7 +34,7 @@ public class Test {
 	
 	
 	
-        //SurfCompare show = new SurfCompare(imageA,imageB);
-        //show.display();
+        SurfCompare show = new SurfCompare(imageA,imageB);
+        show.display();
     }
 }
