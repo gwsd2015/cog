@@ -1,0 +1,11 @@
+Piece			Uncalculated	Precalculated	Thumbs
+A Starry Night		8597		4992		28
+Guernica 		1319		825		860
+Persistence of Memory	1498		771		23
+Girl with Pearl Earing	1304		423		323
+The Scream		2583		531		374
+American Gothic		1112		591		23
+
+
+
+Average from 20 iterations

@@ -30,7 +30,7 @@ public class CogServer extends ServerResource implements RestInterface {
 	try {
 	    for(int i=0; i<titles.length; i++) {
 		PieceInfo temp = new PieceInfo(titles[i], artists[i], years[i]);
-		String fname = String.format("image%d.jpg", i*2+1);
+		String fname = String.format("test_image/image%d.jpg", i*2+1);
 		
 		temp.addImage(ImageIO.read(new File(fname)));
 		pieces.add(temp);
