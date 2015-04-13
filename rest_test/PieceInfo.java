@@ -8,6 +8,7 @@ public class PieceInfo {
     private String artist, name;
     private int year;
     private ArrayList<Surf> images;
+    private Surf thumb;
 
     //initializes with given name and default artist and year
     public PieceInfo(String nm) {
@@ -54,12 +55,28 @@ public class PieceInfo {
 	surf.getFreeOrientedInterestPoints();
 	
 	images.add(surf);
+	
+	if(thumb == null) {
+	    thumb = new Surf(resizeImage(img, img.getType()));
+	    thumb.getFreeOrientedInterestPoints();
+	}
     }
 
     public String toString() {
 	return String.format("Name:%s\nArtist:%s\nYear:%s", getName(), getArtist(), getYear());
     }
 
+    public static BufferedImage resizeImage(BufferedImage originalImage, int type){
+	BufferedImage resizedImage = new BufferedImage(originalImage.getWidth()/10,
+						       originalImage.getHeight()/10,
+						       type);
+	Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, originalImage.getWidth()/10,
+		    originalImage.getHeight()/10, null);
+        g.dispose();
+
+        return resizedImage;
+    }
 
     //TO CHANGE - initialize surfs right away so IPoints can be calculated and stored
     //compares images
@@ -86,5 +103,9 @@ public class PieceInfo {
 		ratio = cur;
 	}
 	return ratio;
+    }
+    
+    public double compareThumb(Surf input) {
+	return surfCompare(thumb, input);
     }
 }

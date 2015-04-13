@@ -14,30 +14,30 @@ import com.stromberglabs.jopensurf.*;
 
 public class CogServer extends ServerResource implements RestInterface {
     private static ArrayList<PieceInfo> pieces;
-    
+    static int ind;
     private static final double TOLERANCE = 0.1;
     private static final Server server = new Server(Protocol.HTTP, 8182,
 						    CogServer.class);
 
     private static void loadPieces() {
-	PieceInfo melt = new PieceInfo("Melt Shop", "Jack Shannon", 2015);
-	PieceInfo sbux = new PieceInfo("Starbucks", "Jack Shannon", 2015);
+	String[] titles = {"Guernica", "American Gothic",
+			   "The Persistence Of Memory", "Girl With a Pearl Earing",
+			   "A Starry Night", "The Scream"};
+	String[] artists = {"Pablo Picasso", "Grant Wood", "Salvador Dali",
+			    "Johannes Vermeer", "Vincent van Gogh", "Edvard Munch"};
+	int[] years = {1937, 1930, 1931, 1665, 1889, 1893};
 	
 	try {
-	    melt.addImage(ImageIO.read(new File("image0.jpg")));
-	    melt.addImage(ImageIO.read(new File("image1.jpg")));
-	    melt.addImage(ImageIO.read(new File("image2.jpg")));
-	    //melt.addImage(ImageIO.read(new File("test_image3.jpg")));
-	    
-	    sbux.addImage(ImageIO.read(new File("image00.jpg")));
-	    sbux.addImage(ImageIO.read(new File("image01.jpg")));
-	    //sbux.addImage(ImageIO.read(new File("image02.jpg")));
+	    for(int i=0; i<titles.length; i++) {
+		PieceInfo temp = new PieceInfo(titles[i], artists[i], years[i]);
+		String fname = String.format("image%d.jpg", i*2+1);
+		
+		temp.addImage(ImageIO.read(new File(fname)));
+		pieces.add(temp);
+	    }
 	} catch(IOException e) {
 	    System.out.println(e);
 	}
-	
-	pieces.add(sbux);
-	pieces.add(melt);
     }
     
     public static void main(String[] args) throws Exception {
@@ -46,7 +46,7 @@ public class CogServer extends ServerResource implements RestInterface {
 	System.out.printf("Loading pieces, calculating IPoints...");
 	loadPieces();
 	System.out.printf("Finished\n");
-	
+	ind = 0;
 	Context ctx = new Context();
         server.setContext(ctx);
         server.getContext().getParameters().add("keystorePassword", "password");
@@ -59,44 +59,59 @@ public class CogServer extends ServerResource implements RestInterface {
 	return "GET";
     }
     
-    //PUT - will likely use for building db of images
+    //PUT - write image to file
     public void store(Representation byteRep) {
 	System.out.printf("PUT received\n");
 	
-	File output = new File("image0.jpg");
+	File output = new File(String.format("image%d.jpg", ind));
 	try {
 	    ImageIO.write(processImg(byteRep), "jpg", output);
+	    ind++;
 	}
 	catch (IOException e) {
 	    System.out.println(e);
 	}
     }
     
-    //TO DELETE
-    private PieceInfo getTestPiece(BufferedImage img) {
-	File output = new File("test_image.jpg");
-	try {
-	    ImageIO.write(img, "jpg", output);
-	} catch(IOException e) {
-	    System.out.println(e);
-	}
-	return new PieceInfo("thing", "Jack", 1999);
-    }
-    
-    private String findMatch(BufferedImage img) {
-	Surf in = new Surf(img);
+    private ArrayList<PieceInfo> findMatchingThumbs(BufferedImage img) {
+	ArrayList<PieceInfo> out = new ArrayList<PieceInfo>();
+	Surf thumb = new Surf(PieceInfo.resizeImage(img, img.getType()));
 	
 	for(PieceInfo piece:pieces) {
-	    double ratio = piece.compareImage(in);
-	    System.out.println(ratio);
-	    
+	    double ratio = piece.compareThumb(thumb);
+	    //System.out.printf("%s - %f\n\n", piece.toString(), ratio);
 	    if(ratio > TOLERANCE) {
-		return piece.toString();
+		out.add(piece);
+	    }
+	}
+	return out;
+    }
+
+    private String findMatch(BufferedImage img) {
+	ArrayList<PieceInfo> poss = findMatchingThumbs(img);
+	
+	if(poss.isEmpty()) {
+	    poss.addAll(pieces);
+	}
+	if(poss.size() == 1) {
+	    return poss.get(0).toString();
+	}
+	else {
+	    Surf in = new Surf(img);
+	
+	    for(PieceInfo piece:poss) {
+		double ratio = piece.compareImage(in);
+		//System.out.println(piece.toString() + " - " + ratio);
+	    
+		if(ratio > TOLERANCE) {
+		    return piece.toString();
+		}
 	    }
 	}
 	return "No match found";
     }
     
+    //converts Restlet rep into BufferedImage for jopenSURF
     private BufferedImage processImg(Representation rep) {
 	InputStream stream;
 	BufferedImage img;
